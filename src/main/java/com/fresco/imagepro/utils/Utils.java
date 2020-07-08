@@ -14,7 +14,9 @@ import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 
-public class ImageProUtils {
+import com.fresco.imagepro.exception.RespuestaException;
+
+public class Utils {
 
 	public static String writeImageToBytes(int width, int height, Image image) throws IOException {
 		BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
@@ -83,5 +85,16 @@ public class ImageProUtils {
 		iis.close();
 		return reader.getFormatName();
 	}
-
+	
+	public static int parseInt(String value, String parameter) throws RespuestaException {
+		try
+		{
+			int res = Integer.parseInt(value);	
+			return res;
+		}
+		catch(NumberFormatException e)
+		{
+			throw new RespuestaException("param: " + parameter  + " " + e.getMessage());
+		}
+	}
 }
