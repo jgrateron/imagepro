@@ -8,6 +8,8 @@ import java.net.URL;
 
 import javax.imageio.ImageIO;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +21,14 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fresco.imagepro.controller.Response;
 import com.fresco.imagepro.exception.RespuestaException;
 import com.fresco.imagepro.service.IResize;
-import com.fresco.imagepro.utils.ImageProUtils;
+import com.fresco.imagepro.utils.Utils;
 
 @Service
 public class ResizeServiceImpl implements IResize 
 {
 
+	private static final Logger logger = LoggerFactory.getLogger(ResizeServiceImpl.class);
+	
 	@Autowired
 	private ObjectMapper mapper;
 	
@@ -34,35 +38,22 @@ public class ResizeServiceImpl implements IResize
 	public ResponseEntity<JsonNode> v1(JsonNode request) throws RespuestaException 
 	{
 		//todos los parametros son opcionales
-		JsonNode jwidth = request.get("width");
-		JsonNode jheight = request.get("height");
-		JsonNode jmode = request.get("mode");
-		JsonNode jurlimg = request.get("urlimg");
-		JsonNode jb64img = request.get("b64img");
-		
-		String width = null;
-		if (jwidth != null) {
-			width = jwidth.asText(); 
-		}
-		String height = null;
-		if (jheight != null) {
-			height = jheight.asText(); 
-		}
+
+		String width = getParameterRequest(request,"width");
+		String height = getParameterRequest(request,"height");
 		if (width == null && height == null) {
 			throw new RespuestaException("Debe incluir el width o height");
 		}
-		String mode = null;
-		if (jmode != null) {
-			mode = jmode.asText();
-		}
-		String urlimg = null;
-		if (jurlimg != null) {
-			urlimg = jurlimg.asText(); 
-		}
-		String b64img = null;
-		if (jb64img != null) {
-			b64img = jb64img.asText(); 
-		}
+		String typesize = getParameterRequest(request,"typesize");
+		validarTypesize(typesize);
+		
+		String stretch = getParameterRequest(request,"stretch");
+		validarStretch(stretch);
+
+		String urlimg = getParameterRequest(request,"urlimg");
+
+		String b64img = getParameterRequest(request,"b64img");
+
 		if (urlimg == null && b64img == null){
 			throw new RespuestaException("Debe incluir el urlimg o b64img");
 		}
@@ -78,27 +69,53 @@ public class ResizeServiceImpl implements IResize
 			image = getImageFromBase64(b64img, "b64img");
 		}
 		
-		int w = image.getWidth();
-		int h = image.getHeight();
+		float w = image.getWidth();
+		float h = image.getHeight();
 		if (width != null && height != null)
 		{
-			w = Integer.parseInt(width);
-			h = Integer.parseInt(height);
+			w = Utils.parseInt(width,"width");
+			h = Utils.parseInt(height,"height");
 		}
 		else
-		if (width != null) {
-			w = Integer.parseInt(width);
+		if (width != null) 
+		{
+			if ("%".equals(typesize)) {
+				float percent = Utils.parseInt(width,"% width") / 100.0f;
+				w = w * percent;
+			}
+			else {
+				w = Utils.parseInt(width,"width");
+			}
+			if ("false".equals(stretch)) {
+				float divisor = image.getWidth() / w;
+				h = Math.round(h / divisor);
+			}
 		}
 		else
-		if (height != null) {
-			h = Integer.parseInt(height);
+		if (height != null) 
+		{
+			if ("%".equals(typesize)) {
+				float percent = Utils.parseInt(height,"% height") / 100.0f;
+				h = h * percent;
+			}
+			else {
+				h = Utils.parseInt(height,"height");
+			}
+			if ("false".equals(stretch)) {
+				float divisor = image.getHeight() / h;
+				w = Math.round(w / divisor);
+			}			
+		}
+		logger.info("old w: " + image.getWidth() + " h: " + image.getHeight() + " new w: " + w + " h: " + h);
+		if (Math.round(w) == 0 || Math.round(h) == 0) {
+			throw new RespuestaException("Las nuevas dimensiones son iguales a 0");
 		}
 		Image newImage = image.getScaledInstance(Math.round(w), Math.round(h), Image.SCALE_SMOOTH);
 		String imagen;
 		try 
 		{
-			imagen = ImageProUtils.writeImageToBytes(w,h,newImage);
-		} 
+			imagen = Utils.writeImageToBytes(Math.round(w),Math.round(h),newImage);
+		}
 		catch (IOException e) {
 			throw new RespuestaException(e.toString());
 		}
@@ -108,6 +125,45 @@ public class ResizeServiceImpl implements IResize
 		ObjectNode oNode = (ObjectNode) nodeResponse;
 		oNode.put("imagen", imagen);
 		return ResponseEntity.status(HttpStatus.OK).body(nodeResponse);			
+	}
+	/**
+	 * 
+	 * @param stretch
+	 * @throws RespuestaException
+	 */
+	private void validarStretch(String stretch) throws RespuestaException {
+		if (stretch == null) {
+			throw new RespuestaException("Debe incluir el parámetro stretch");
+		}
+		if (!("true".equals(stretch) || "false".equals(stretch))){
+			throw new RespuestaException("El parámetro stretch no es válido (true,false)");
+		}
+	}
+	/**
+	 * 
+	 * @param request
+	 * @param param
+	 * @return value
+	 */
+	private String getParameterRequest(JsonNode request , String param) {
+		JsonNode jparam = request.get(param);
+		if (jparam != null) {
+			return jparam.asText();
+		}
+		return null;
+	}
+	/**
+	 * 
+	 * @param typesize
+	 * @throws RespuestaException
+	 */
+	private void validarTypesize(String typesize) throws RespuestaException {
+		if (typesize == null) {
+			throw new RespuestaException("Debe incluir el parámetro typesize");
+		}
+		if (!("px".equals(typesize) || "%".equals(typesize))) {
+			throw new RespuestaException("El parámetro typesize no es válido (px,%) ");
+		}
 	}
 	/**
 	 * 
@@ -142,7 +198,7 @@ public class ResizeServiceImpl implements IResize
 	{
 		try 
 		{
-			InputStream imgIS = ImageProUtils.getImgFromBase64(content, param);
+			InputStream imgIS = Utils.getImgFromBase64(content, param);
 			BufferedImage image = ImageIO.read(imgIS);
 			if (image == null) {
 				throw new RespuestaException("urlimg es una imagen inválida");
