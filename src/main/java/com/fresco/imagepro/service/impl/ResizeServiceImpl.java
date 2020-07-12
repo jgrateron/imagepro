@@ -26,7 +26,10 @@ import com.fresco.imagepro.utils.Utils;
 @Service
 public class ResizeServiceImpl implements IResize 
 {
-
+	private static int MAXWIDTH = 8192;
+	private static int MAXHEIGHT = 4320;
+	private static int MAXPORC = 500;
+	
 	private static final Logger logger = LoggerFactory.getLogger(ResizeServiceImpl.class);
 	
 	@Autowired
@@ -41,11 +44,20 @@ public class ResizeServiceImpl implements IResize
 
 		String width = getParameterRequest(request,"width");
 		String height = getParameterRequest(request,"height");
-		if (width == null && height == null) {
-			throw new RespuestaException("Debe incluir el width o height");
+		if (width == null || height == null) {
+			throw new RespuestaException("Debe incluir el width y height");
+		}
+		if (width.isBlank() && height.isBlank()) {
+			throw new RespuestaException("Debe incluir el width o height no vacios");
+		}
+		if (width.isBlank()) {
+			width = null;
+		}
+		if (height.isBlank()) {
+			height = null;
 		}
 		String typesize = getParameterRequest(request,"typesize");
-		validarTypesize(typesize);
+		validarTypesize(typesize, width, height);
 		
 		String stretch = getParameterRequest(request,"stretch");
 		validarStretch(stretch);
@@ -68,7 +80,6 @@ public class ResizeServiceImpl implements IResize
 		if (b64img != null) {
 			image = getImageFromBase64(b64img, "b64img");
 		}
-		
 		float w = image.getWidth();
 		float h = image.getHeight();
 		if (width != null && height != null)
@@ -109,6 +120,12 @@ public class ResizeServiceImpl implements IResize
 		logger.info("old w: " + image.getWidth() + " h: " + image.getHeight() + " new w: " + w + " h: " + h);
 		if (Math.round(w) == 0 || Math.round(h) == 0) {
 			throw new RespuestaException("Las nuevas dimensiones son iguales a 0");
+		}
+		if (w > MAXWIDTH) {
+			throw new RespuestaException("El valor máximo del nuevo width es " + MAXWIDTH);
+		}
+		if (h > MAXHEIGHT) {
+			throw new RespuestaException("El valor máximo del nuevo height es " + MAXHEIGHT);
 		}
 		Image newImage = image.getScaledInstance(Math.round(w), Math.round(h), Image.SCALE_SMOOTH);
 		String imagen;
@@ -157,12 +174,41 @@ public class ResizeServiceImpl implements IResize
 	 * @param typesize
 	 * @throws RespuestaException
 	 */
-	private void validarTypesize(String typesize) throws RespuestaException {
+	private void validarTypesize(String typesize, String width, String height) throws RespuestaException 
+	{
 		if (typesize == null) {
 			throw new RespuestaException("Debe incluir el parámetro typesize");
 		}
 		if (!("px".equals(typesize) || "%".equals(typesize))) {
 			throw new RespuestaException("El parámetro typesize no es válido (px,%) ");
+		}
+		if ("%".equals(typesize)) {
+			if (width != null) {
+				int w = Utils.parseInt(width,"% width");
+				if (w > MAXPORC) {
+					throw new RespuestaException("El porcentaje máximo de width es " + MAXPORC);
+				}
+			}
+			if (height != null) {
+				int h = Utils.parseInt(height,"% height");
+				if (h > MAXPORC) {
+					throw new RespuestaException("El porcentaje máximo de height es " + MAXPORC);
+				}				
+			}
+		}
+		if ("px".equals(typesize)) {
+			if (width != null) {
+				int w = Utils.parseInt(width,"width");
+				if (w > MAXWIDTH) {
+					throw new RespuestaException("El valor máximo de width es " + MAXWIDTH);
+				}
+			}
+			if (height != null) {
+				int h = Utils.parseInt(height,"% height");
+				if (h > MAXHEIGHT) {
+					throw new RespuestaException("El valor máximo de height es " + MAXHEIGHT);
+				}				
+			}			
 		}
 	}
 	/**
