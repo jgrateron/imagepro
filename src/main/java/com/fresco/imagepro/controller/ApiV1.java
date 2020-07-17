@@ -73,7 +73,13 @@ public class ApiV1 {
 	@PostMapping("/crop")
 	public ResponseEntity<JsonNode> crop(@RequestBody JsonNode request)
 	{
-		return crop.v1(request);
+		try
+		{
+			return crop.v1(request);	
+		}
+		catch (RespuestaException e) {
+			return responseError(e.getMessage());
+		}		
 	}
 	/**
 	 * 
