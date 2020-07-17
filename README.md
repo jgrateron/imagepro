@@ -1,6 +1,13 @@
 # imagepro
 Servidor Rest para manipulación de imágenes en Java
 
+Está realizado usando
+
+Maven
+Spring boot
+
+Rest server for image management
+
 # Soporta tres tipos de operaciones
 - Resize
 - Rotate
@@ -8,9 +15,10 @@ Servidor Rest para manipulación de imágenes en Java
 
 Se puede enviar la imagen en base64 o la url.
 
+De fácil configuración de un cluster para paralelizar tareas
+
 # Api Resize
 http://localhost:8080/api/v1/resize
-
 
 ```
 {
@@ -22,6 +30,7 @@ http://localhost:8080/api/v1/resize
     "urlimg" : ""
 }
 ```
+El redimensionado de las imagenes se pueden hacer en base a pixel o porcentajes
 
 # Api Rotate
 http://localhost:8080/api/v1/rotate
@@ -34,7 +43,8 @@ http://localhost:8080/api/v1/rotate
     "urlimg" : ""
 }
 ```
-
+La rotación de imagenes en formato png deja los espacios en transparente si se coloca el parámetro color vacío  
+ 
 # Api Crop
 http://localhost:8080/api/v1/crop
 
