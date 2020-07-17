@@ -1,13 +1,7 @@
 package com.fresco.imagepro.service.impl;
 
 import java.awt.Image;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-
-import javax.imageio.ImageIO;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +15,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fresco.imagepro.controller.Response;
 import com.fresco.imagepro.exception.RespuestaException;
 import com.fresco.imagepro.service.IResize;
+import com.fresco.imagepro.utils.MiImagen;
 import com.fresco.imagepro.utils.Utils;
 
 @Service
@@ -42,8 +37,8 @@ public class ResizeServiceImpl implements IResize
 	{
 		//todos los parametros son opcionales
 
-		String width = getParameterRequest(request,"width");
-		String height = getParameterRequest(request,"height");
+		String width = Utils.getParameterRequest(request,"width");
+		String height = Utils.getParameterRequest(request,"height");
 		if (width == null || height == null) {
 			throw new RespuestaException("Debe incluir el width y height");
 		}
@@ -56,15 +51,15 @@ public class ResizeServiceImpl implements IResize
 		if (height.isBlank()) {
 			height = null;
 		}
-		String typesize = getParameterRequest(request,"typesize");
+		String typesize = Utils.getParameterRequest(request,"typesize");
 		validarTypesize(typesize, width, height);
 		
-		String stretch = getParameterRequest(request,"stretch");
+		String stretch = Utils.getParameterRequest(request,"stretch");
 		validarStretch(stretch);
 
-		String urlimg = getParameterRequest(request,"urlimg");
+		String urlimg = Utils.getParameterRequest(request,"urlimg");
 
-		String b64img = getParameterRequest(request,"b64img");
+		String b64img = Utils.getParameterRequest(request,"b64img");
 
 		if (urlimg == null && b64img == null){
 			throw new RespuestaException("Debe incluir el urlimg o b64img");
@@ -72,16 +67,16 @@ public class ResizeServiceImpl implements IResize
 		if (urlimg != null && b64img != null){
 			throw new RespuestaException("Debe incluir el urlimg o b64img");
 		}
-		BufferedImage image = null;
+		MiImagen miImagen = null;
 		
 		if (urlimg != null) {
-			image = getImageFromUrl(urlimg,"urlimg");
+			miImagen = Utils.getImageFromUrl(urlimg,"urlimg");
 		}
 		if (b64img != null) {
-			image = getImageFromBase64(b64img, "b64img");
+			miImagen = Utils.getImageFromBase64(b64img, "b64img");
 		}
-		float w = image.getWidth();
-		float h = image.getHeight();
+		float w = miImagen.getImage().getWidth();
+		float h = miImagen.getImage().getHeight();
 		if (width != null && height != null)
 		{
 			w = Utils.parseInt(width,"width");
@@ -98,7 +93,7 @@ public class ResizeServiceImpl implements IResize
 				w = Utils.parseInt(width,"width");
 			}
 			if ("false".equals(stretch)) {
-				float divisor = image.getWidth() / w;
+				float divisor =  miImagen.getImage().getWidth() / w;
 				h = Math.round(h / divisor);
 			}
 		}
@@ -113,11 +108,11 @@ public class ResizeServiceImpl implements IResize
 				h = Utils.parseInt(height,"height");
 			}
 			if ("false".equals(stretch)) {
-				float divisor = image.getHeight() / h;
+				float divisor =  miImagen.getImage().getHeight() / h;
 				w = Math.round(w / divisor);
 			}			
 		}
-		logger.info("old w: " + image.getWidth() + " h: " + image.getHeight() + " new w: " + w + " h: " + h);
+		logger.info("resize old w: " +  miImagen.getImage().getWidth() + " h: " +  miImagen.getImage().getHeight() + " new w: " + w + " h: " + h);
 		if (Math.round(w) == 0 || Math.round(h) == 0) {
 			throw new RespuestaException("Las nuevas dimensiones son iguales a 0");
 		}
@@ -127,20 +122,24 @@ public class ResizeServiceImpl implements IResize
 		if (h > MAXHEIGHT) {
 			throw new RespuestaException("El valor máximo del nuevo height es " + MAXHEIGHT);
 		}
-		Image newImage = image.getScaledInstance(Math.round(w), Math.round(h), Image.SCALE_SMOOTH);
+		Image newImage =  miImagen.getImage().getScaledInstance(Math.round(w), Math.round(h), Image.SCALE_SMOOTH);
+		String formatName = miImagen.getFormatName();
+		miImagen = null;	
 		String imagen;
 		try 
 		{
-			imagen = Utils.writeImageToBytes(Math.round(w),Math.round(h),newImage);
+			imagen = Utils.writeImageToB64(Math.round(w),Math.round(h), newImage, formatName);
+			newImage = null;
+
 		}
 		catch (IOException e) {
 			throw new RespuestaException(e.toString());
 		}
-		
 		Response response = new Response(true);
 		JsonNode nodeResponse = mapper.valueToTree(response);
 		ObjectNode oNode = (ObjectNode) nodeResponse;
 		oNode.put("imagen", imagen);
+		oNode.put("formatName", formatName);
 		return ResponseEntity.status(HttpStatus.OK).body(nodeResponse);			
 	}
 	/**
@@ -155,19 +154,6 @@ public class ResizeServiceImpl implements IResize
 		if (!("true".equals(stretch) || "false".equals(stretch))){
 			throw new RespuestaException("El parámetro stretch no es válido (true,false)");
 		}
-	}
-	/**
-	 * 
-	 * @param request
-	 * @param param
-	 * @return value
-	 */
-	private String getParameterRequest(JsonNode request , String param) {
-		JsonNode jparam = request.get(param);
-		if (jparam != null) {
-			return jparam.asText();
-		}
-		return null;
 	}
 	/**
 	 * 
@@ -209,50 +195,6 @@ public class ResizeServiceImpl implements IResize
 					throw new RespuestaException("El valor máximo de height es " + MAXHEIGHT);
 				}				
 			}			
-		}
-	}
-	/**
-	 * 
-	 * @param urlimg url de la imagen
-	 * @param param nombre de la variable
-	 * @return Image
-	 * @throws RespuestaException
-	 */
-	private BufferedImage getImageFromUrl(String urlimg, String param) throws RespuestaException
-	{
-		try 
-		{
-			URL urlImg = new URL(urlimg);
-			BufferedImage image = ImageIO.read(urlImg);
-			if (image == null) {
-				throw new RespuestaException(param + " no es una imagen válida");
-			}
-			return image;
-		} 
-		catch (IOException e) {
-			throw new RespuestaException(e.toString());
-		}
-	}
-	/**
-	 * 
-	 * @param content contenido de la imagen en base64
-	 * @param param nombre del parametro
-	 * @return Image
-	 * @throws RespuestaException
-	 */
-	private BufferedImage getImageFromBase64(String content, String param) throws RespuestaException
-	{
-		try 
-		{
-			InputStream imgIS = Utils.getImgFromBase64(content, param);
-			BufferedImage image = ImageIO.read(imgIS);
-			if (image == null) {
-				throw new RespuestaException("urlimg es una imagen inválida");
-			}
-			return image;
-		} 
-		catch (IOException e) {
-			throw new RespuestaException(e.toString());
 		}
 	}
 }

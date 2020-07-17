@@ -10,8 +10,22 @@ import com.fresco.imagepro.service.ICrop;
 public class CropServiceImpl implements ICrop {
 
 	@Override
-	public ResponseEntity<JsonNode> v1(JsonNode request) {
+	public ResponseEntity<JsonNode> v1(JsonNode request) 
+	{
+		String width = getParameterRequest(request,"width");
 		return null;
 	}
-
+	/**
+	 * 
+	 * @param request
+	 * @param param
+	 * @return value
+	 */
+	private String getParameterRequest(JsonNode request , String param) {
+		JsonNode jparam = request.get(param);
+		if (jparam != null) {
+			return jparam.asText();
+		}
+		return null;
+	}
 }

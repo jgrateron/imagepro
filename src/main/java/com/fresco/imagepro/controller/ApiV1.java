@@ -57,7 +57,13 @@ public class ApiV1 {
 	@PostMapping("/rotate")
 	public ResponseEntity<JsonNode> rotate(@RequestBody JsonNode request)
 	{
-		return rotate.v1(request);
+		try 
+		{
+			return rotate.v1(request);
+		} 
+		catch (RespuestaException e) {
+			return responseError(e.getMessage());
+		}
 	}
 	/**
 	 * 
