@@ -49,3 +49,13 @@ http://localhost:8080/api/v1/crop
 }
 ```
 
+# Retorno
+
+```
+{
+	"success" : "true|false",
+	"message" : "en caso de false",
+	"imagen" : "base64",
+	"formatName" : "png"
+}
+```
