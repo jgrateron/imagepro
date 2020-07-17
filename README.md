@@ -1,11 +1,14 @@
 # imagepro
 Servidor Rest para manipulación de imágenes en Java
+
 Rest server for image management
 
 Está realizado usando
 
 Maven
+
 Spring boot
+
 Compatible con jdk 8 o superior 
 
 # Soporta tres tipos de operaciones
@@ -66,6 +69,6 @@ http://localhost:8080/api/v1/crop
 	"success" : "true|false",
 	"message" : "en caso de false",
 	"imagen" : "base64",
-	"formatName" : "png"
+	"formatName" : "jpeg|png"
 }
 ```
