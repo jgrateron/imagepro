@@ -42,13 +42,13 @@ public class ResizeServiceImpl implements IResize
 		if (width == null || height == null) {
 			throw new RespuestaException("Debe incluir el width y height");
 		}
-		if (width.isBlank() && height.isBlank()) {
+		if (width.isEmpty() && height.isEmpty()) {
 			throw new RespuestaException("Debe incluir el width o height no vacios");
 		}
-		if (width.isBlank()) {
+		if (width.isEmpty()) {
 			width = null;
 		}
-		if (height.isBlank()) {
+		if (height.isEmpty()) {
 			height = null;
 		}
 		String typesize = Utils.getParameterRequest(request,"typesize");

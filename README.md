@@ -1,12 +1,12 @@
 # imagepro
 Servidor Rest para manipulación de imágenes en Java
+Rest server for image management
 
 Está realizado usando
 
 Maven
 Spring boot
-
-Rest server for image management
+Compatible con jdk 8 o superior 
 
 # Soporta tres tipos de operaciones
 - Resize
