@@ -1,22 +1,55 @@
 # imagepro
-Servidor Rest para manipulación de imágenes en Java
+
+Servidor Rest para manipulación de imágenes en Java usando Spring boot
 
 Rest server for image management
 
-Está realizado usando
+# Requisitos
+
+Git
 
 Maven
 
-Spring boot
+jdk 8 o superior
 
 Compatible con jdk 8 o superior 
 
+
+# Instalación
+
+ - Descargar e instalar Git
+
+ - Descargar e instalar maven 3.5 o superior
+
+ - Descargar e instalar jdk 1.8 o superior
+
+
+ - Clonar repositorio 
+
+ - git clone https://github.com/jgrateron/imagepro.git
+
+
+ - Compilar/empaquetar
+
+ - cd imagepro/
+ - mvn package
+
+
+ - Ejecutar jar
+ 
+ - java -jar target/imagepro-0.0.1-SNAPSHOT.jar
+ 
+
+ - Por defecto el puerto es 8080, se puede cambiar usando la variable de entorno PORT
+ 
+ - export PORT=80
+ 
 # Soporta tres tipos de operaciones
 - Resize
 - Rotate
 - Crop
 
-Se puede enviar la imagen en base64 o la url.
+Se puede enviar la imagen en base64 o la descarga a través de una url.
 
 De fácil configuración de un cluster para paralelizar tareas
 
@@ -33,7 +66,7 @@ http://localhost:8080/api/v1/resize
     "urlimg" : ""
 }
 ```
-El redimensionado de las imagenes se pueden hacer en base a pixel o porcentajes
+El redimensionado de las imágenes se pueden hacer en base a pixel o porcentajes
 
 # Api Rotate
 http://localhost:8080/api/v1/rotate
@@ -46,7 +79,7 @@ http://localhost:8080/api/v1/rotate
     "urlimg" : ""
 }
 ```
-La rotación de imagenes en formato png deja los espacios en transparente si se coloca el parámetro color vacío  
+La rotación de imágenes en formato png deja los espacios en transparente si se coloca el parámetro color vacío  
  
 # Api Crop
 http://localhost:8080/api/v1/crop
@@ -72,3 +105,5 @@ http://localhost:8080/api/v1/crop
 	"formatName" : "jpeg|png"
 }
 ```
+
+
