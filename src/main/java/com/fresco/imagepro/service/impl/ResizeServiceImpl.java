@@ -79,8 +79,17 @@ public class ResizeServiceImpl implements IResize
 		float h = miImagen.getImage().getHeight();
 		if (width != null && height != null)
 		{
-			w = Utils.parseInt(width,"width");
-			h = Utils.parseInt(height,"height");
+			if ("%".equals(typesize)) {
+				float percent = Utils.parseInt(width,"% width") / 100.0f;
+				w = w * percent;
+				percent = Utils.parseInt(height,"% height") / 100.0f;
+				h = h * percent;
+			}
+			else
+			{
+				w = Utils.parseInt(width,"width");
+				h = Utils.parseInt(height,"height");				
+			}
 		}
 		else
 		if (width != null) 
