@@ -66,7 +66,12 @@ public class CropServiceImpl implements ICrop {
 		if (b64img != null) {
 			miImagen = Utils.getImageFromBase64(b64img, "b64img");
 		}
-		
+		if (x + w > miImagen.getImage().getWidth()) {
+			throw new RespuestaException("(x + width) is outside of Raster");
+		}
+		if (y + h > miImagen.getImage().getHeight()) {
+			throw new RespuestaException("(y + height) is outside of Raster");
+		}
 		BufferedImage newImg = miImagen.getImage().getSubimage(x, y, w, h);
 		String formatName = miImagen.getFormatName();
 		miImagen = null;	    
