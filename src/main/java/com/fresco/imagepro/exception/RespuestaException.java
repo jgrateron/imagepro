@@ -1,5 +1,7 @@
 package com.fresco.imagepro.exception;
 
+//creado por Jairo Grateron jgrateron@gmail.com
+
 public class RespuestaException extends Exception{
 
 	private static final long serialVersionUID = 1L;

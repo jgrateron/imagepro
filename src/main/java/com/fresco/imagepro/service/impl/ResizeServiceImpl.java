@@ -1,5 +1,7 @@
 package com.fresco.imagepro.service.impl;
 
+//creado por Jairo Grateron jgrateron@gmail.com
+
 import java.awt.Image;
 import java.io.IOException;
 import org.slf4j.Logger;

@@ -1,5 +1,7 @@
 package com.fresco.imagepro.utils;
 
+//creado por Jairo Grateron jgrateron@gmail.com
+
 import java.awt.image.BufferedImage;
 
 public class MiImagen {

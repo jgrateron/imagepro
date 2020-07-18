@@ -1,5 +1,7 @@
 package com.fresco.imagepro.controller;
 
+//creado por Jairo Grateron jgrateron@gmail.com
+
 public class Response 
 {
 	private boolean success;

@@ -1,5 +1,7 @@
 package com.fresco.imagepro.service.impl;
 
+//creado por Jairo Grateron jgrateron@gmail.com
+
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
