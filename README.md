@@ -47,7 +47,7 @@ jdk 8 o superior
 - Rotate
 - Crop
 
-Se puede enviar la imagen en base64 o la descarga a través de una url.
+Se puede enviar la imagen al servicio como base64 o a través de una url la descarga.
 
 De fácil configuración de un cluster para paralelizar tareas
 
@@ -66,6 +66,31 @@ http://localhost:8080/api/v1/resize
 ```
 El redimensionado de las imágenes se pueden hacer en base a pixel o porcentajes
 El parámetro stretch sirve para estirar la imagen cuando no exista en ancho o el alto 
+
+# Ejemplos Resize 
+
+Redimensionar la imagen "urlimg" a un 10% de su ancho 
+```
+{
+    "width" : "10",
+    "height" : "",
+    "typesize" : "%",
+    "stretch" : "false",
+    "urlimg" : "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
+}
+```
+
+Redimensionar la imagen "urlimg" a 500 pixeles de alto 
+```
+{
+    "width" : "",
+    "height" : "500",
+    "typesize" : "px",
+    "stretch" : "false",
+    "urlimg" : "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
+}
+```
+
 
 # Api Rotate
 http://localhost:8080/api/v1/rotate
