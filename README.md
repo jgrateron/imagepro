@@ -1,8 +1,8 @@
 # imagepro
 
-Servidor Rest para manipulación de imágenes en Java usando Spring boot
+Rest server for image management usign spring boot
 
-Rest server for image management
+Servidor Rest para manipulación de imágenes en Java usando Spring boot
 
 # Requisitos
 
@@ -10,9 +10,7 @@ Git
 
 Maven
 
-jdk 8 o superior
-
-Compatible con jdk 8 o superior 
+jdk 8 o superior 
 
 
 # Instalación
@@ -67,6 +65,7 @@ http://localhost:8080/api/v1/resize
 }
 ```
 El redimensionado de las imágenes se pueden hacer en base a pixel o porcentajes
+El parámetro stretch sirve para estirar la imagen cuando no exista en ancho o el alto 
 
 # Api Rotate
 http://localhost:8080/api/v1/rotate
@@ -105,5 +104,11 @@ http://localhost:8080/api/v1/crop
 	"formatName" : "jpeg|png"
 }
 ```
+
+# Seguridad
+
+Se agrega el módulo spring security con usuario "user" clave "123456"
+Desde Postman o un cliente se debe agregar el tipo de seguridad "Authorization: Basic"
+https://developer.mozilla.org/es/docs/Web/HTTP/Authentication
 
 
