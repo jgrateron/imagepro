@@ -47,7 +47,7 @@ jdk 8 o superior
 - Rotate
 - Crop
 
-Se puede enviar la imagen al servicio como base64 o a través de una url la descarga.
+Se puede enviar la imagen al servicio como base64 o a través de una url, la descarga.
 
 De fácil configuración de un cluster para paralelizar tareas
 
@@ -121,6 +121,10 @@ http://localhost:8080/api/v1/crop
 
 # Retorno
 
+Al procesar la imagen el sistema devuelve un json con la información si pudo realizar la tarea,
+
+en caso afirmativo el atributo imagen contiene el resultado en base64
+
 ```
 {
 	"success" : "true|false",
@@ -139,5 +143,10 @@ Las variables de entorno IMG_USER y IMG_PWD para cambiar los valores por defecto
 Desde Postman o un cliente se debe agregar el tipo de seguridad "Authorization: Basic"
 
 https://developer.mozilla.org/es/docs/Web/HTTP/Authentication
+
+
+# Comentarios y sugerencias
+
+Jairo Graterón jgrateron@gmail.com Barquisimeto, Venezuela
 
 
