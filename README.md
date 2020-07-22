@@ -147,6 +147,6 @@ https://developer.mozilla.org/es/docs/Web/HTTP/Authentication
 
 # Comentarios y sugerencias
 
-Jairo Graterón jgrateron@gmail.com Barquisimeto, Venezuela
+Jairo Graterón jgrateron@gmail.com
 
 
