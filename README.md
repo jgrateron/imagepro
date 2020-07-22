@@ -65,7 +65,7 @@ http://localhost:8080/api/v1/resize
 }
 ```
 El redimensionado de las imágenes se pueden hacer en base a pixel o porcentajes
-El parámetro stretch sirve para estirar la imagen cuando no exista en ancho o el alto 
+El parámetro stretch sirve para estirar la imagen cuando no exista el ancho o alto 
 
 # Ejemplos Resize 
 
@@ -133,7 +133,11 @@ http://localhost:8080/api/v1/crop
 # Seguridad
 
 Se agrega el módulo spring security con usuario "user" clave "123456"
+
+Las variables de entorno IMG_USER y IMG_PWD para cambiar los valores por defecto.
+
 Desde Postman o un cliente se debe agregar el tipo de seguridad "Authorization: Basic"
+
 https://developer.mozilla.org/es/docs/Web/HTTP/Authentication
 
 
