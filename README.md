@@ -24,7 +24,7 @@ jdk 8 o superior
 
  - Clonar repositorio 
 
- - git clone https://github.com/jgrateron/imagepro.git
+ - git clone httpss://github.com/jgrateron/imagepro.git
 
 
  - Compilar/empaquetar
@@ -37,10 +37,13 @@ jdk 8 o superior
  
  - java -jar target/imagepro-0.0.1-SNAPSHOT.jar
  
+ - spring boot incluye un servidor web "Apache Tomcat" para el despliegue de la aplicación
 
- - Por defecto el puerto es 8080, se puede cambiar usando la variable de entorno PORT
+ - Por defecto el puerto es 8443, se puede cambiar usando la variable de entorno PORT
  
- - export PORT=80
+ - export PORT=443
+ 
+ - el puerto 443 requiere que la aplicación sea ejecutada con privilegios de administrador
  
 # Soporta tres tipos de operaciones
 - Resize
@@ -52,7 +55,7 @@ Se puede enviar la imagen al servicio como base64 o a través de una url, la des
 De fácil configuración de un cluster para paralelizar tareas
 
 # Api Resize
-http://localhost:8080/api/v1/resize
+https://localhost:8443/api/v1/resize
 
 ```
 {
@@ -76,7 +79,7 @@ Redimensionar la imagen "urlimg" a un 10% de su ancho
     "height" : "",
     "typesize" : "%",
     "stretch" : "false",
-    "urlimg" : "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
+    "urlimg" : "httpss://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
 }
 ```
 
@@ -87,13 +90,13 @@ Redimensionar la imagen "urlimg" a 500 pixeles de alto
     "height" : "500",
     "typesize" : "px",
     "stretch" : "false",
-    "urlimg" : "https://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
+    "urlimg" : "httpss://upload.wikimedia.org/wikipedia/commons/b/b4/The_Sun_by_the_Atmospheric_Imaging_Assembly_of_NASA%27s_Solar_Dynamics_Observatory_-_20100819.jpg"
 }
 ```
 
 
 # Api Rotate
-http://localhost:8080/api/v1/rotate
+https://localhost:8443/api/v1/rotate
 
 ```
 {
@@ -106,7 +109,7 @@ http://localhost:8080/api/v1/rotate
 La rotación de imágenes en formato png deja los espacios en transparente si se coloca el parámetro color vacío  
  
 # Api Crop
-http://localhost:8080/api/v1/crop
+https://localhost:8443/api/v1/crop
 
 ```
 {
@@ -142,9 +145,15 @@ Las variables de entorno IMG_USER y IMG_PWD para cambiar los valores por defecto
 
 Desde Postman o un cliente se debe agregar el tipo de seguridad "Authorization: Basic"
 
-https://developer.mozilla.org/es/docs/Web/HTTP/Authentication
+https://developer.mozilla.org/es/docs/Web/http/Authentication
 
 
+# Novedades
+
+ - 2020-07-23 
+ - Se agrega seguridad ssl/tsl
+ - las variables de entorno (KEYSTORE,KEYPASSWORD,KEYTYPE,KEYALIAS) permiten cambiar el almacen de certificado. 
+ 
 # Comentarios y sugerencias
 
 Jairo Graterón jgrateron@gmail.com
